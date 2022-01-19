@@ -37,9 +37,16 @@ int32 UUIProjectGameInstance::GetPoints()
 void UUIProjectGameInstance::SetPoints(int32 _Points)
 {
 	Points = _Points;
+	UpdatePoints();
 }
 
 void UUIProjectGameInstance::AddPoints(int32 _Points /*= 1*/)
 {
 	Points += _Points;
+	UpdatePoints();
+}
+
+void UUIProjectGameInstance::UpdatePoints()
+{
+	OnPointsUpdateDelegate.Broadcast(Points);
 }

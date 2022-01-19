@@ -3,12 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
+//#include "Components/WidgetComponent.h"
 #include "GameFramework/Actor.h"
 #include "InteractiveCube.generated.h"
 
 class AUIProjectCharacter;
 class UUIProjectGameInstance;
-
+class UWidgetComponent;
+class UHealthActorComponent;
 UENUM()
 enum class ECubeType
 {
@@ -33,8 +35,14 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FName ColorParamName = FName(TEXT("BaseColor"));
 
-private:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UHealthActorComponent* HealthComp;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UWidgetComponent* HealthWidgetComp;
+
+private:
+	
 	UPROPERTY()
 	AUIProjectCharacter* Player;
 

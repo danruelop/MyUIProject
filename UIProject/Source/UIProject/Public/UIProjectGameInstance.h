@@ -6,6 +6,8 @@
 #include "Engine/GameInstance.h"
 #include "UIProjectGameInstance.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnPointsUpdate, int32, Points);
+
 /**
  * 
  */
@@ -27,6 +29,8 @@ class UIPROJECT_API UUIProjectGameInstance : public UGameInstance
 
 	public:
 
+	UPROPERTY()
+	FOnPointsUpdate OnPointsUpdateDelegate;
 	UUIProjectGameInstance();
 
 	UFUNCTION(BlueprintCallable)
@@ -49,4 +53,7 @@ class UIPROJECT_API UUIProjectGameInstance : public UGameInstance
 
 	UFUNCTION()
 	void AddPoints(int32 _Points = 1);
+
+	UFUNCTION()
+	void UpdatePoints();
 };

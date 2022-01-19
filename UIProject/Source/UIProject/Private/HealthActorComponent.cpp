@@ -3,6 +3,9 @@
 
 #include "HealthActorComponent.h"
 
+#include "InteractiveCube.h"
+#include "UIProject/UIProjectCharacter.h"
+
 // Sets default values for this component's properties
 UHealthActorComponent::UHealthActorComponent()
 {
@@ -43,6 +46,10 @@ void UHealthActorComponent::SetCurrentHealth(float _CurrentHealth)
 	CurrentHealth = FMath::Clamp(CurrentHealth, 0.0f, MaxHealth);
 	NormalizedCurrentHealth = CurrentHealth/MaxHealth;
 	UpdateHealth();
+	if(CurrentHealth <= 0.0f)
+	{
+		Die();
+	}
 }
 
 void UHealthActorComponent::Damage(float _HealthAmount)
@@ -60,6 +67,16 @@ void UHealthActorComponent::Heal(float _HealthAmount)
 void UHealthActorComponent::UpdateHealth()
 {
 	OnHealthUpdateDelegate.Broadcast(CurrentHealth, NormalizedCurrentHealth);
+}
+
+void UHealthActorComponent::Die()
+{
+	AActor* Owner = GetOwner();
+	
+	if(Cast<AInteractiveCube>(Owner))
+	{
+		Owner->Destroy();
+	}
 }
 
 // Called when the game starts

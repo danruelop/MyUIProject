@@ -6,6 +6,8 @@
 #include "GameFramework/Character.h"
 #include "UIProjectCharacter.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnAmmoUpdate, int32, CurrentAmmo, int32, MaxAmmo);
+
 class UInputComponent;
 class USkeletalMeshComponent;
 class USceneComponent;
@@ -20,6 +22,8 @@ class AUIProjectCharacter : public ACharacter
 {
 	GENERATED_BODY()
 
+	
+	
 	/** Pawn mesh: 1st person view (arms; seen only by self) */
 	UPROPERTY(VisibleDefaultsOnly, Category=Mesh)
 	USkeletalMeshComponent* Mesh1P;
@@ -54,19 +58,40 @@ class AUIProjectCharacter : public ACharacter
 
 public:
 
+	UPROPERTY()
+	FOnAmmoUpdate OnAmmoUpdateDelegate;
+	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UHealthActorComponent* HealthComponent;
 
 	UPROPERTY()
 	UInGameHUDUserWidget* InGameHUD;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int32 MaxAmmo = 10;
 
+private:
+	UPROPERTY()
+	int32 CurrentAmmo = 10;
+	
 public:
 	AUIProjectCharacter();
 
 protected:
-	virtual void BeginPlay();
+	virtual void BeginPlay() override;
 
 public:
+
+	UFUNCTION()
+	void DecreaseAmmo();
+	UFUNCTION()
+	void Recharge();
+
+	UFUNCTION()
+	void SetMaxAmmo(int32 _MaxAmmo);
+
+	UFUNCTION()
+	void UpdateAmmo() const;
 	/** Base turn rate, in deg/sec. Other scaling may affect final turn rate. */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Camera)
 	float BaseTurnRate;

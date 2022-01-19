@@ -56,6 +56,7 @@ public:
 	void Heal(float _HealthAmount);
 
 	void UpdateHealth();
+	void Die();
 
 protected:
 	// Called when the game starts

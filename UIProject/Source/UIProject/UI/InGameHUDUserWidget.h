@@ -8,6 +8,7 @@
 
 class AUIProjectCharacter;
 class UProgressBar;
+class UTextBlock;
 /**
  * 
  */
@@ -18,8 +19,12 @@ class UIPROJECT_API UInGameHUDUserWidget : public UUserWidget
 
 public:
 
-	UPROPERTY();
+	UPROPERTY()
 	UProgressBar* HealthBar;
+	UPROPERTY()
+	UTextBlock* AmmoText;
+	UPROPERTY()
+	UTextBlock* PointsCounterText;
 
 public:
 
@@ -29,6 +34,10 @@ public:
 
 	UFUNCTION()
 	void UpdateHealthUI(float _Health, float _NormalizedHealth);
+	UFUNCTION()
+	void UpdateAmmoUI(int32 CurrentAmmo, int32 MaxAmmo);
+	UFUNCTION()
+	void UpdatePointsUI(int32 Points);
 
 	
 	

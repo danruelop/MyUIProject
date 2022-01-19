@@ -87,6 +87,9 @@ AUIProjectCharacter::AUIProjectCharacter()
 	/*TODO: Health Component*/
 	HealthComponent = CreateDefaultSubobject<UHealthActorComponent>(TEXT("HealthComponent"));
 	this->AddOwnedComponent(HealthComponent);
+
+	CurrentAmmo = MaxAmmo;
+	
 }
 
 void AUIProjectCharacter::BeginPlay()
@@ -108,6 +111,34 @@ void AUIProjectCharacter::BeginPlay()
 		VR_Gun->SetHiddenInGame(true, true);
 		Mesh1P->SetHiddenInGame(false, true);
 	}
+
+	
+}
+
+void AUIProjectCharacter::DecreaseAmmo()
+{
+	if(CurrentAmmo > 0)
+	{
+		CurrentAmmo--;
+		UpdateAmmo();
+	}
+}
+
+void AUIProjectCharacter::Recharge()
+{
+	CurrentAmmo = MaxAmmo;
+	UpdateAmmo();
+}
+
+void AUIProjectCharacter::SetMaxAmmo(int32 _MaxAmmo)
+{
+	MaxAmmo = _MaxAmmo;
+	UpdateAmmo();
+}
+
+void AUIProjectCharacter::UpdateAmmo() const
+{
+	OnAmmoUpdateDelegate.Broadcast(CurrentAmmo, MaxAmmo);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -121,9 +152,10 @@ void AUIProjectCharacter::SetupPlayerInputComponent(class UInputComponent* Playe
 	// Bind jump events
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
 	PlayerInputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
-
+	
 	// Bind fire event
 	PlayerInputComponent->BindAction("Fire", IE_Pressed, this, &AUIProjectCharacter::OnFire);
+	PlayerInputComponent->BindAction("Recharge", IE_Pressed, this, &AUIProjectCharacter::Recharge);
 
 	// Enable touchscreen input
 	EnableTouchscreenMovement(PlayerInputComponent);
@@ -151,6 +183,13 @@ float AUIProjectCharacter::TakeDamage(float DamageAmount, struct FDamageEvent co
 
 void AUIProjectCharacter::OnFire()
 {
+
+	if(CurrentAmmo <= 0)
+	{
+		return;
+	}
+
+	DecreaseAmmo();
 	// try and fire a projectile
 	if (ProjectileClass != nullptr)
 	{

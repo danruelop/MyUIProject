@@ -7,6 +7,8 @@
 #include "../UIProjectCharacter.h"
 #include "UIProjectGameInstance.h"
 #include "HealthActorComponent.h"
+#include "Components/WidgetComponent.h"
+#include "UIProject/UI/InteractiveCubeUserWidget.h"
 
 // Sets default values
 AInteractiveCube::AInteractiveCube()
@@ -16,6 +18,17 @@ AInteractiveCube::AInteractiveCube()
 
 	CubeMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Cube Mesh"));
 	this->AddOwnedComponent(CubeMesh);
+
+	HealthComp = CreateDefaultSubobject<UHealthActorComponent>(TEXT("HealthComponent"));
+	this->AddOwnedComponent(HealthComp);
+
+	HealthWidgetComp = CreateDefaultSubobject<UWidgetComponent>(TEXT("HealthWidgetComponent"));
+	if(HealthWidgetComp)
+	{
+		static ConstructorHelpers::FClassFinder<UUserWidget> WidgetClassFinder(TEXT("/Game/UI/BP_InteractiveCubeUserWidget"));
+		HealthWidgetComp->SetWidgetClass(WidgetClassFinder.Class);
+		HealthWidgetComp->AttachToComponent(CubeMesh, FAttachmentTransformRules::KeepRelativeTransform);
+	}
 }
 
 // Called when the game starts or when spawned
@@ -46,7 +59,22 @@ void AInteractiveCube::BeginPlay()
 			}
 		}
 	}
-	
+
+	if(HealthWidgetComp)
+	{
+		HealthWidgetComp->SetWidgetSpace(EWidgetSpace::Screen);
+		HealthWidgetComp->SetVisibility(true);
+		HealthWidgetComp->AddLocalOffset(FVector(0, 0, 100));
+		HealthWidgetComp->RegisterComponent();
+		if(HealthWidgetComp->GetUserWidgetObject())
+		{
+			UInteractiveCubeUserWidget* UserWidget = Cast<UInteractiveCubeUserWidget>(HealthWidgetComp->GetUserWidgetObject());
+			if(UserWidget)
+			{
+				UserWidget->Init(this);
+			}
+		}
+	}
 }
 
 void AInteractiveCube::OnCubeHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
@@ -79,6 +107,8 @@ void AInteractiveCube::OnCubeHit(UPrimitiveComponent* HitComponent, AActor* Othe
 			default:
 				break;
 			}
+
+			HealthComp->Damage(10.0f);
 		}	
 	}
 }
@@ -87,6 +117,5 @@ void AInteractiveCube::OnCubeHit(UPrimitiveComponent* HitComponent, AActor* Othe
 void AInteractiveCube::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
 }
 

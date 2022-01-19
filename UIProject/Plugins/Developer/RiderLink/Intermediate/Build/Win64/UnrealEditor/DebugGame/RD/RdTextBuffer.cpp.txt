@@ -1,0 +1,2 @@
+C:\Users\danru\Desktop\Repos\MyUIProject\UIProject\Plugins\Developer\RiderLink\Intermediate\Build\Win64\UnrealEditor\DebugGame\RD\Definitions.h
+C:\Users\danru\Desktop\Repos\MyUIProject\UIProject\Plugins\Developer\RiderLink\Source\RD\src\rd_gen_cpp\src\RdTextBuffer.h
